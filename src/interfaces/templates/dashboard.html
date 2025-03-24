@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2>Bem-vindo, {{ user.username }}!</h2>
+    <p>Email: {{ user.email }}</p>
+
+    <h3>Criar Novo Post</h3>
+    <form method="post">
+        {% csrf_token %}
+        <input type="text" name="title" placeholder="Título do post" required>
+        <textarea name="content" placeholder="Escreva seu post aqui..." rows="5" required></textarea>
+        <button type="submit">Publicar</button>
+    </form>
+
+    <h3>Posts Publicados</h3>
+    {% if posts %}
+        {% for post in posts %}
+            <div class="post">
+                <h4>{{ post.title }}</h4>
+                <p>{{ post.content }}</p>
+                <small>Publicado em: {{ post.created_at|date:"d/m/Y H:i" }}</small>
+                <form action="{% url 'delete_post' post.id %}" method="POST" style="display:inline;">
+                    {% csrf_token %}
+                    <button type="submit" style="background-color: red; color: white; border: none; padding: 5px 10px; cursor: pointer;">
+                        Excluir
+                    </button>
+                </form>
+                <a href="{% url 'edit_post' post.id %}" style="background-color: blue; color: white; padding: 5px 10px; text-decoration: none; border-radius: 5px;">Editar</a>
+            </div>
+        {% endfor %}
+    {% else %}
+        <p>Ainda não há posts publicados.</p>
+    {% endif %}
+</div>
+{% endblock %}
